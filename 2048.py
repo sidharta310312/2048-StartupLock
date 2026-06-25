@@ -358,6 +358,10 @@ for imgName in list(imageSources): #Download game assets
     
     MakeText("Loading content...", 40, white, centerPos, True)
     MakeText(f"Getting images... ({images_loaded}/{len(imageSources)})", 20, white, (centerPos[0], centerPos[1] + 50), False)
+
+    MakeText(f"If the program crashes mid-way loading, just close and reopen and the loading will continue", 15, yellow, (centerPos[0], screensize[1] - 50), False)
+
+    print(f"Loading asset no. {images_loaded} : {imgName}")
     pygame.display.flip()
 
     #print(type(os.path.join(assets_directory, imgName)))
@@ -397,68 +401,143 @@ while gameloop:
     if __name__ == "__main__" and len(sys.argv) > 1:
         gameloop = not "--startup" in sys.argv
 
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            hostname = socket.gethostname()
-            local_ip = socket.gethostbyname(hostname)
-            screen.blit(imageSurfaces["GTAU BRO"], (0,0))
-            pygame.display.set_icon(imageSurfaces["GTAU BRO"])
-            pygame.display.set_caption(f"L̴̮̬̼̩͂̆̓̊͝O̴͓̝͆̏̈́O̴̮͑̈́̄͜͜K̵͕̯̩̞̗͊ ̶̯̆̈́̆B̴̨̟͔͋̉͠Ë̸̝͕̺̺͉́͊̄͘͝H̷̯͒̋͋͋͘Ḯ̵̳̲̐͘N̸͎̯̂͝D̷͖̆ ̴̬̫̒̔̇͐̌Y̸͙͖͆͜Ỏ̷̖̱͐̾͝Ü̷͇̙̦͎̉̐̿͋͜     {getpass.getuser()}")
-            MakeText(str(local_ip),60, red, centerPos, True)
-            pygame.display.flip()
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if page == "start" and startBtn.colliderect(cursor):
-                page = "newGame" if numOccup == [] else "gameTime"
-                page_flashbangValue = 255
-                if numOccup != [] and not gameover:
-                    timeStarted = time.time()
-                #transition = True
-            elif page == "start" and newGameBtn.colliderect(cursor) and numOccup != []:
-                warningText_string = ""
-                if not gameover:
+    if images_loaded == len(imageSurfaces): #Check input and output
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                hostname = socket.gethostname()
+                local_ip = socket.gethostbyname(hostname)
+                screen.blit(imageSurfaces["GTAU BRO"], (0,0))
+                pygame.display.set_icon(imageSurfaces["GTAU BRO"])
+                pygame.display.set_caption(f"L̴̮̬̼̩͂̆̓̊͝O̴͓̝͆̏̈́O̴̮͑̈́̄͜͜K̵͕̯̩̞̗͊ ̶̯̆̈́̆B̴̨̟͔͋̉͠Ë̸̝͕̺̺͉́͊̄͘͝H̷̯͒̋͋͋͘Ḯ̵̳̲̐͘N̸͎̯̂͝D̷͖̆ ̴̬̫̒̔̇͐̌Y̸͙͖͆͜Ỏ̷̖̱͐̾͝Ü̷͇̙̦͎̉̐̿͋͜     {getpass.getuser()}")
+                MakeText(str(local_ip),60, red, centerPos, True)
+                pygame.display.flip()
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if page == "start" and startBtn.colliderect(cursor):
+                    page = "newGame" if numOccup == [] else "gameTime"
                     page_flashbangValue = 255
-                    warningText_Ypos = screensize[1]
-                    page = "warn"
-                else:
-                    page_flashbangValue = 255
-                    numOccup = []
-                    boardSize = [4,4]
-                    currentScore, movesMade = (0,0)
-                    TimerVariable, timeStarted = (0,0)
-                    gameover = False
-                    warningText_Ypos = screensize[1]
+                    if numOccup != [] and not gameover:
+                        timeStarted = time.time()
+                    #transition = True
+                elif page == "start" and newGameBtn.colliderect(cursor) and numOccup != []:
                     warningText_string = ""
-                    page = "newGame"
-
-            elif page == "newGame":
-                if startBtn.colliderect(cursor):
-                    numOccup = []
-                    for row in range(boardSize[1]):
-                        numOccup.append([0]*boardSize[0])
-                    
-                    numOccup = AddRandomNumber(numOccup)[0]
-
-                    #numOccup[0] = [1]*4 + [0]*(len(numOccup[0])-4)
-
-                    print(numOccup)
-                    page_flashbangValue = 255        
-                    page = "gameTransition"
-                for btnType in incrementBtn:
-                    for index, btn in enumerate(incrementBtn[btnType]):
-                        if btn.colliderect(cursor):
-                            condits = {"plus":boardSize[index] < 10, "minus":boardSize[index] > 2}
-
-                            if condits[btnType]:
-                                boardSize[index] += {"plus":1, "minus":-1}[btnType]
-
-            elif page == "gameTime":
-                if cursor.colliderect(HomeIcon_rect):
                     if not gameover:
-                        TimerVariable += time.time() - timeStarted
+                        page_flashbangValue = 255
+                        warningText_Ypos = screensize[1]
+                        page = "warn"
+                    else:
+                        page_flashbangValue = 255
+                        numOccup = []
+                        boardSize = [4,4]
+                        currentScore, movesMade = (0,0)
+                        TimerVariable, timeStarted = (0,0)
+                        gameover = False
+                        warningText_Ypos = screensize[1]
+                        warningText_string = ""
+                        page = "newGame"
+
+                elif page == "newGame":
+                    if startBtn.colliderect(cursor):
+                        numOccup = []
+                        for row in range(boardSize[1]):
+                            numOccup.append([0]*boardSize[0])
+                        
+                        numOccup = AddRandomNumber(numOccup)[0]
+
+                        #numOccup[0] = [1]*4 + [0]*(len(numOccup[0])-4)
+
+                        print(numOccup)
+                        page_flashbangValue = 255        
+                        page = "gameTransition"
+                    for btnType in incrementBtn:
+                        for index, btn in enumerate(incrementBtn[btnType]):
+                            if btn.colliderect(cursor):
+                                condits = {"plus":boardSize[index] < 10, "minus":boardSize[index] > 2}
+
+                                if condits[btnType]:
+                                    boardSize[index] += {"plus":1, "minus":-1}[btnType]
+
+                elif page == "gameTime":
+                    if cursor.colliderect(HomeIcon_rect):
+                        if not gameover:
+                            TimerVariable += time.time() - timeStarted
+                        
+                        icons_transitionPos = [-100]*4
+                        icons_transitionIndex = 0
+                        icon_flashbang = [255] * 4
+                        creditText_xpos = 200
+
+                        #page_flashbangValue = 255
+                        startBtn = pygame.Rect(0,0,300,100)
+                        page = "start"
+                    elif cursor.colliderect(startBtn) and not gameover:
+                        if Path(f"{saveFile_drive}:/").is_dir() and SaveName_string == "":
+                            warningText_Ypos = 150
+                            #startBtn.center = centerPos[0], screensize[1] - 100
+                            SaveAlert_time = 0
+                            twoStep_SNverification = False
+                            page = "savingGame"
+                        elif not Path(f"{saveFile_drive}:/").is_dir():
+                            warningText_string = f"Drive {saveFile_drive} required to save games"
+                            SaveAlert_time = time.time() + 3
+                        elif SaveName_string != "":
+                            data = {"boardSize":boardSize,
+                                    "boardData":numOccup,
+                                    "Timer" : TimerVariable + time.time() - timeStarted,
+                                    "MovesMade":movesMade,
+                                    "LastPlayed":str(datetime.now().date())}
+                            saving_path = os.path.join(Path(f"{saveFile_drive}:/2048userdata/"), f"{SaveName_string}.json")
+                            #print("SAVING DATA TO " + save_directory)
+                            with open(Path(saving_path), "w") as file:
+                                json.dump(data, file)
+                            
+                            warningText_string = f"Saved successfully as {SaveName_string}.json"
+                            SaveAlert_time = time.time() + 3
+
+                    elif cursor.colliderect(newGameBtn) and show_gameoverTip < time.time():
+                        #page_flashbangValue = 255
+                        numOccup = [[0]*boardSize[0]]*boardSize[1]
+                        #boardSize = [4,4]
+                        currentScore, movesMade = (0,0)
+                        TimerVariable, timeStarted = (0,time.time())
+                        gameover = False
+                elif page == "warn":
+                    for index, btn in enumerate(warnBtnChoices):
+                        if btn.colliderect(cursor):
+                            page = ["newGame", "start"][index]
+                            if index == 0:
+                                page_flashbangValue = 255
+                                numOccup = []
+                                boardSize = [4,4]
+                                currentScore, movesMade = (0,0)
+                                TimerVariable, timeStarted = (0,0)
+                                gameover = False
+                                warningText_Ypos = screensize[1]
+                                warningText_string = ""
                     
+                elif page == "savingGame" and startBtn.colliderect(cursor) and not twoStep_SNverification:
+                    if len(SaveName_string) > 0 and SaveName_string + ".json" not in allJSON_files:
+                        data = {"boardSize":boardSize,
+                                "boardData":numOccup,
+                                "Timer" : TimerVariable + time.time() - timeStarted,
+                                "MovesMade":movesMade,
+                                "LastPlayed":str(datetime.now().date())}
+                        
+                        SaveData(SaveName_string, data)
+                        
+                        page = "gameTime"
+                        warningText_string = f"Saved successfully as {SaveName_string}.json"
+                        SaveAlert_time = time.time() + 3
+                    elif len(SaveName_string) <= 0:
+                        SaveAlert_time = time.time() + 1
+                    elif SaveName_string + ".json" in allJSON_files:
+                        page_flashbangValue = 0
+                        imageSurfaces["LEFT_ARROW"].set_alpha(180)
+                        imageSurfaces["RIGHT_ARROW"].set_alpha(180)
+                        twoStep_SNverification = True
+                
+                elif page == "savingGame" and HomeIcon_rect.colliderect(cursor):
                     icons_transitionPos = [-100]*4
                     icons_transitionIndex = 0
                     icon_flashbang = [255] * 4
@@ -467,264 +546,189 @@ while gameloop:
                     #page_flashbangValue = 255
                     startBtn = pygame.Rect(0,0,300,100)
                     page = "start"
-                elif cursor.colliderect(startBtn) and not gameover:
-                    if Path(f"{saveFile_drive}:/").is_dir() and SaveName_string == "":
-                        warningText_Ypos = 150
-                        #startBtn.center = centerPos[0], screensize[1] - 100
-                        SaveAlert_time = 0
+
+                    if twoStep_SNverification:
                         twoStep_SNverification = False
-                        page = "savingGame"
-                    elif not Path(f"{saveFile_drive}:/").is_dir():
-                        warningText_string = f"Drive {saveFile_drive} required to save games"
+                        SaveName_string = ""
+                
+                elif page == "start" and loadBtn.colliderect(cursor):
+                    page_flashbangValue = 255
+                    allJSON_files = GetUserData()
+                    warningText_string = ""
+                    page = "loadFile"
+
+                elif page == "loadFile":
+                    if cursor.colliderect(loadGame_btns["PLAY"]) and len(allJSON_files) > 0:
+                        page = "gameTime"
+                        page_flashbangValue = 255
+                        boardSize, numOccup, timerVariable, movesMade = [selected_userData[0][key] for key in list(selected_userData[0])][0:4]
                         SaveAlert_time = time.time() + 3
-                    elif SaveName_string != "":
+                        SaveName_string = selected_userData[1][:-5]
+                        warningText_string = "Successfully loaded " + selected_userData[1]
+                        timeStarted = time.time()
+                        selected_userData = {}
+                    elif cursor.colliderect(loadGame_btns["PLAY"]) and len(allJSON_files) == 0:
+                        page = "newGame"
+                        page_flashbangValue = 255
+                    elif cursor.colliderect(HomeIcon_rect):
+                        icons_transitionPos = [-100]*4
+                        icons_transitionIndex = 0
+                        icon_flashbang = [255] * 4
+                        creditText_xpos = 200
+                        page = "start"
+                    elif cursor.colliderect(loadGame_pagebuttons["PREVIOUS"]) and userData_page > 0:
+                        userData_page -= 1
+                    elif cursor.colliderect(loadGame_pagebuttons["NEXT"]) and userData_page < math.ceil(len(allJSON_files)/5) - 1:
+                        userData_page += 1
+                    elif cursor.colliderect(loadGame_btns["DELETE"]) and len(allJSON_files) > 0:
+                        print(f"User requested to delete {selected_userData[1]}")
+                        if warningText_string != selected_userData[1]:
+                            warningText_string = selected_userData[1]
+                        else:
+                            os.remove(f"{saveFile_drive}:/2048userdata/{warningText_string}")
+                            SaveName_string = ""
+                            warningText_string = ""
+
+                elif page == "easteregg2" and cursor.colliderect(startBtn):
+                    if not show_eastereggInfo:
+                        warningText_string = ""
+                        show_eastereggInfo = True
+                    elif show_eastereggInfo and TimerVariable < time.time():
+                        print("Initiating secrets")
+                        page_flashbangValue = 255
+                        TimerVariable = time.time() + 5
+                        startBtn.size = (270, 50)
+                        page = "easteregg3"
+                        for key in incrementBtn:
+                            for i in range(2):
+                                incrementBtn[key][i].size = 30,30
+
+                elif page == "easteregg3":
+                    for key in incrementBtn:
+                        for i in range(2):
+                            if cursor.colliderect(incrementBtn[key][i]):
+                                if key == "minus" and (7,0)[i] < startuplock_Settings[list(startuplock_Settings)[i]]:
+                                    startuplock_Settings[list(startuplock_Settings)[i]] -= 1
+                                elif key == "plus" and startuplock_Settings[list(startuplock_Settings)[i]] < (10, 5)[i]:
+                                    startuplock_Settings[list(startuplock_Settings)[i]] += 1
+                    
+                    if cursor.colliderect(startBtn) and TimerVariable < time.time():
+                        activate_StartupLock(startuplock_Settings["TIMER"], startuplock_Settings["SCORE"])
+                        page = "easteregg4"
+                        warningText_string = ""
+                        page_flashbangValue = 255
+                        TimerVariable = time.time() + 2
+                
+                elif page == "easteregg4" and cursor.colliderect(startBtn) and SLdelete_warn[0] != "DELETED":
+                    SLdelete_warn = [delete_StartupLock(), 0]
+
+                if cursor.colliderect(creditTextRect):
+                    webbrowser.open_new_tab("https://github.com/sidharta310312" if KeySequenceIndex == 0 else "https://en.wikipedia.org/wiki/Konami_Code")
+
+            if event.type == pygame.KEYDOWN and page == "gameTime":
+                keyName = pygame.key.name(event.key)
+                directions = {"left":("x", 0),
+                            "right":("x", 1),
+                            "up":("y", 0),
+                            "down":("y", 1)}
+                
+                if keyName in "wasd":
+                    keyName = {"w":"up",
+                            "a":"left",
+                            "s":"down",
+                            "d":"right"}[keyName]
+
+                if keyName in list(directions):
+                    CurrentAxis = directions[keyName][0]
+                    CurrentDirection = directions[keyName][1]
+
+                    if CurrentAxis == "x":
+                        for row_index, row in enumerate(numOccup):
+                            numOccup[row_index] = CombineNumbers(row, CurrentDirection)
+
+                    elif CurrentAxis == "y":
+                        RotatedBoard = [] #Up to Down on Normal Board = Left to Right on Rotated Board
+                        for i in range(boardSize[0]):
+                            RotatedBoard.append([])
+                            for j in range(boardSize[1]):
+                                RotatedBoard[i].append(numOccup[j][i])
+                        
+                        #print(f"Rotated board : {RotatedBoard}")
+                        for column_index, column in enumerate(RotatedBoard):
+                            RotatedBoard[column_index] = CombineNumbers(column, CurrentDirection)
+                        
+                        for i in range(boardSize[0]):
+                            for j in range(boardSize[1]):
+                                numOccup[j][i] = RotatedBoard[i][j]
+
+                    if 0 in UnpackSublists(numOccup):
+                        numOccup, newblock_flashbangValue["Position"] = AddRandomNumber(numOccup)
+                        newblock_flashbangValue["Opacity"] = 255
+                    elif not 0 in UnpackSublists(numOccup) and not gameover:
+                        #Check gameover
+                        gameover = True
+                        for row in numOccup:
+                            for item_index in range(len(row)):
+                                if item_index < len(row) - 1 and gameover:
+                                    gameover = not row[item_index] == row[item_index + 1]
+                        
+                        for i in range(boardSize[0]):
+                            for j in range(boardSize[1]):
+                                if j < boardSize[1] - 1 and gameover:
+                                    gameover = not numOccup[j][i] == numOccup[j + 1][i]
+                        
+                        if gameover:
+                            TimerVariable += time.time() - timeStarted
+                            show_gameoverTip = time.time() + 2.3
+                            
+                            page_flashbangValue = 255
+
+
+                    currentScore = max(UnpackSublists(numOccup))
+                    ArrowKeyPressed = keyName.upper() + "_ARROW"
+                    movesMade += 1 if not gameover else 0
+                    print(f"IS GAMEOVER? {gameover}, BOARD DATA = {numOccup}")
+            
+            if event.type == pygame.KEYDOWN and page == "savingGame":
+                keyName = pygame.key.name(event.key)
+                if not twoStep_SNverification:
+                    if keyName in string.ascii_letters + string.digits and len(SaveName_string) < 16:
+                        SaveName_string += keyName
+                    elif event.key == pygame.K_BACKSPACE:
+                        SaveName_string = SaveName_string[:-1]
+                else:
+                    if keyName == "left":
                         data = {"boardSize":boardSize,
                                 "boardData":numOccup,
                                 "Timer" : TimerVariable + time.time() - timeStarted,
                                 "MovesMade":movesMade,
                                 "LastPlayed":str(datetime.now().date())}
-                        saving_path = os.path.join(Path(f"{saveFile_drive}:/2048userdata/"), f"{SaveName_string}.json")
-                        #print("SAVING DATA TO " + save_directory)
-                        with open(Path(saving_path), "w") as file:
-                            json.dump(data, file)
                         
+                        SaveData(SaveName_string, data)
+                        
+                        page = "gameTime"
                         warningText_string = f"Saved successfully as {SaveName_string}.json"
                         SaveAlert_time = time.time() + 3
+                    elif keyName == "right":
+                        twoStep_SNverification = False
 
-                elif cursor.colliderect(newGameBtn) and show_gameoverTip < time.time():
-                    #page_flashbangValue = 255
-                    numOccup = [[0]*boardSize[0]]*boardSize[1]
-                    #boardSize = [4,4]
-                    currentScore, movesMade = (0,0)
-                    TimerVariable, timeStarted = (0,time.time())
-                    gameover = False
-            elif page == "warn":
-                for index, btn in enumerate(warnBtnChoices):
-                    if btn.colliderect(cursor):
-                        page = ["newGame", "start"][index]
-                        if index == 0:
-                            page_flashbangValue = 255
-                            numOccup = []
-                            boardSize = [4,4]
-                            currentScore, movesMade = (0,0)
-                            TimerVariable, timeStarted = (0,0)
-                            gameover = False
-                            warningText_Ypos = screensize[1]
-                            warningText_string = ""
+            if event.type == pygame.KEYDOWN and page == "start":
+                keyName = pygame.key.name(event.key)
+                if keyName == targetSequence[KeySequenceIndex]:
+                    KeySequenceIndex += 1
+                else:
+                    KeySequenceIndex = 0
                 
-            elif page == "savingGame" and startBtn.colliderect(cursor) and not twoStep_SNverification:
-                if len(SaveName_string) > 0 and SaveName_string + ".json" not in allJSON_files:
-                    data = {"boardSize":boardSize,
-                            "boardData":numOccup,
-                            "Timer" : TimerVariable + time.time() - timeStarted,
-                            "MovesMade":movesMade,
-                            "LastPlayed":str(datetime.now().date())}
-                    
-                    SaveData(SaveName_string, data)
-                    
-                    page = "gameTime"
-                    warningText_string = f"Saved successfully as {SaveName_string}.json"
-                    SaveAlert_time = time.time() + 3
-                elif len(SaveName_string) <= 0:
-                    SaveAlert_time = time.time() + 1
-                elif SaveName_string + ".json" in allJSON_files:
-                    page_flashbangValue = 0
-                    imageSurfaces["LEFT_ARROW"].set_alpha(180)
-                    imageSurfaces["RIGHT_ARROW"].set_alpha(180)
-                    twoStep_SNverification = True
-            
-            elif page == "savingGame" and HomeIcon_rect.colliderect(cursor):
-                icons_transitionPos = [-100]*4
-                icons_transitionIndex = 0
-                icon_flashbang = [255] * 4
-                creditText_xpos = 200
+                print("User key sequence : " , KeySequenceIndex)
+                
 
-                #page_flashbangValue = 255
-                startBtn = pygame.Rect(0,0,300,100)
-                page = "start"
-
-                if twoStep_SNverification:
-                    twoStep_SNverification = False
-                    SaveName_string = ""
-            
-            elif page == "start" and loadBtn.colliderect(cursor):
-                page_flashbangValue = 255
-                allJSON_files = GetUserData()
-                warningText_string = ""
-                page = "loadFile"
-
-            elif page == "loadFile":
-                if cursor.colliderect(loadGame_btns["PLAY"]) and len(allJSON_files) > 0:
-                    page = "gameTime"
+                if KeySequenceIndex == len(targetSequence):
+                    print("User has discovered the easter egg")
+                    page = "easteregg" if not check_winreg() else "easteregg4"
                     page_flashbangValue = 255
-                    boardSize, numOccup, timerVariable, movesMade = [selected_userData[0][key] for key in list(selected_userData[0])][0:4]
-                    SaveAlert_time = time.time() + 3
-                    SaveName_string = selected_userData[1][:-5]
-                    warningText_string = "Successfully loaded " + selected_userData[1]
-                    timeStarted = time.time()
-                    selected_userData = {}
-                elif cursor.colliderect(loadGame_btns["PLAY"]) and len(allJSON_files) == 0:
-                    page = "newGame"
-                    page_flashbangValue = 255
-                elif cursor.colliderect(HomeIcon_rect):
-                    icons_transitionPos = [-100]*4
-                    icons_transitionIndex = 0
-                    icon_flashbang = [255] * 4
+                    warningText_Ypos = 0
+                    KeySequenceIndex = 0
                     creditText_xpos = 200
-                    page = "start"
-                elif cursor.colliderect(loadGame_pagebuttons["PREVIOUS"]) and userData_page > 0:
-                    userData_page -= 1
-                elif cursor.colliderect(loadGame_pagebuttons["NEXT"]) and userData_page < math.ceil(len(allJSON_files)/5) - 1:
-                    userData_page += 1
-                elif cursor.colliderect(loadGame_btns["DELETE"]) and len(allJSON_files) > 0:
-                    print(f"User requested to delete {selected_userData[1]}")
-                    if warningText_string != selected_userData[1]:
-                        warningText_string = selected_userData[1]
-                    else:
-                        os.remove(f"{saveFile_drive}:/2048userdata/{warningText_string}")
-                        SaveName_string = ""
-                        warningText_string = ""
-
-            elif page == "easteregg2" and cursor.colliderect(startBtn):
-                if not show_eastereggInfo:
-                    warningText_string = ""
-                    show_eastereggInfo = True
-                elif show_eastereggInfo and TimerVariable < time.time():
-                    print("Initiating secrets")
-                    page_flashbangValue = 255
-                    TimerVariable = time.time() + 5
-                    startBtn.size = (270, 50)
-                    page = "easteregg3"
-                    for key in incrementBtn:
-                        for i in range(2):
-                            incrementBtn[key][i].size = 30,30
-
-            elif page == "easteregg3":
-                for key in incrementBtn:
-                    for i in range(2):
-                        if cursor.colliderect(incrementBtn[key][i]):
-                            if key == "minus" and (7,0)[i] < startuplock_Settings[list(startuplock_Settings)[i]]:
-                                startuplock_Settings[list(startuplock_Settings)[i]] -= 1
-                            elif key == "plus" and startuplock_Settings[list(startuplock_Settings)[i]] < (10, 5)[i]:
-                                startuplock_Settings[list(startuplock_Settings)[i]] += 1
-                
-                if cursor.colliderect(startBtn) and TimerVariable < time.time():
-                    activate_StartupLock(startuplock_Settings["TIMER"], startuplock_Settings["SCORE"])
-                    page = "easteregg4"
-                    warningText_string = ""
-                    page_flashbangValue = 255
-                    TimerVariable = time.time() + 2
-            
-            elif page == "easteregg4" and cursor.colliderect(startBtn) and SLdelete_warn[0] != "DELETED":
-                SLdelete_warn = [delete_StartupLock(), 0]
-
-            if cursor.colliderect(creditTextRect):
-                webbrowser.open_new_tab("https://github.com/sidharta310312" if KeySequenceIndex == 0 else "https://en.wikipedia.org/wiki/Konami_Code")
-
-        if event.type == pygame.KEYDOWN and page == "gameTime":
-            keyName = pygame.key.name(event.key)
-            directions = {"left":("x", 0),
-                          "right":("x", 1),
-                          "up":("y", 0),
-                          "down":("y", 1)}
-            
-            if keyName in "wasd":
-                keyName = {"w":"up",
-                           "a":"left",
-                           "s":"down",
-                           "d":"right"}[keyName]
-
-            if keyName in list(directions):
-                CurrentAxis = directions[keyName][0]
-                CurrentDirection = directions[keyName][1]
-
-                if CurrentAxis == "x":
-                    for row_index, row in enumerate(numOccup):
-                        numOccup[row_index] = CombineNumbers(row, CurrentDirection)
-
-                elif CurrentAxis == "y":
-                    RotatedBoard = [] #Up to Down on Normal Board = Left to Right on Rotated Board
-                    for i in range(boardSize[0]):
-                        RotatedBoard.append([])
-                        for j in range(boardSize[1]):
-                            RotatedBoard[i].append(numOccup[j][i])
-                    
-                    #print(f"Rotated board : {RotatedBoard}")
-                    for column_index, column in enumerate(RotatedBoard):
-                        RotatedBoard[column_index] = CombineNumbers(column, CurrentDirection)
-                    
-                    for i in range(boardSize[0]):
-                        for j in range(boardSize[1]):
-                            numOccup[j][i] = RotatedBoard[i][j]
-
-                if 0 in UnpackSublists(numOccup):
-                    numOccup, newblock_flashbangValue["Position"] = AddRandomNumber(numOccup)
-                    newblock_flashbangValue["Opacity"] = 255
-                elif not 0 in UnpackSublists(numOccup) and not gameover:
-                    #Check gameover
-                    gameover = True
-                    for row in numOccup:
-                        for item_index in range(len(row)):
-                            if item_index < len(row) - 1 and gameover:
-                                gameover = not row[item_index] == row[item_index + 1]
-                    
-                    for i in range(boardSize[0]):
-                        for j in range(boardSize[1]):
-                            if j < boardSize[1] - 1 and gameover:
-                                gameover = not numOccup[j][i] == numOccup[j + 1][i]
-                    
-                    if gameover:
-                        TimerVariable += time.time() - timeStarted
-                        show_gameoverTip = time.time() + 2.3
-                        
-                        page_flashbangValue = 255
-
-
-                currentScore = max(UnpackSublists(numOccup))
-                ArrowKeyPressed = keyName.upper() + "_ARROW"
-                movesMade += 1 if not gameover else 0
-                print(f"IS GAMEOVER? {gameover}, BOARD DATA = {numOccup}")
-        
-        if event.type == pygame.KEYDOWN and page == "savingGame":
-            keyName = pygame.key.name(event.key)
-            if not twoStep_SNverification:
-                if keyName in string.ascii_letters + string.digits and len(SaveName_string) < 16:
-                    SaveName_string += keyName
-                elif event.key == pygame.K_BACKSPACE:
-                    SaveName_string = SaveName_string[:-1]
-            else:
-                if keyName == "left":
-                    data = {"boardSize":boardSize,
-                            "boardData":numOccup,
-                            "Timer" : TimerVariable + time.time() - timeStarted,
-                            "MovesMade":movesMade,
-                            "LastPlayed":str(datetime.now().date())}
-                    
-                    SaveData(SaveName_string, data)
-                    
-                    page = "gameTime"
-                    warningText_string = f"Saved successfully as {SaveName_string}.json"
-                    SaveAlert_time = time.time() + 3
-                elif keyName == "right":
-                    twoStep_SNverification = False
-
-        if event.type == pygame.KEYDOWN and page == "start":
-            keyName = pygame.key.name(event.key)
-            if keyName == targetSequence[KeySequenceIndex]:
-                KeySequenceIndex += 1
-            else:
-                KeySequenceIndex = 0
-            
-            print("User key sequence : " , KeySequenceIndex)
-            
-
-            if KeySequenceIndex == len(targetSequence):
-                print("User has discovered the easter egg")
-                page = "easteregg" if not check_winreg() else "easteregg4"
-                page_flashbangValue = 255
-                warningText_Ypos = 0
-                KeySequenceIndex = 0
-                creditText_xpos = 200
             
     
 

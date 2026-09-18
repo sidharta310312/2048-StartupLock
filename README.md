@@ -38,10 +38,3 @@ The program consists of 14 built-in libraries and 2 non built-in libraries (pyga
 If you don't have those 2 required non built-in libraries, simply install PIP (Python's package installer) and run this in your terminal window :
 pip install pygame
 pip install requests
-
-## Extra message
-If you like my project, thank you for appreciating it. If you don't, feel free to check out other projects I've made or other people's projects (maybe you'd like one of them!)
-
-Feel free to modify and rewrite the source code, afterall, GitHub is a place where you share open source free code.
-
-25/06/2026

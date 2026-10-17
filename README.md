@@ -4,6 +4,13 @@ A simple 2048 game with cool GUI transition effects, data-saving system to save 
 
 The source code is entirely written in Python. (Only supportable in Windows)
 
+## Asset installation guide
+The game handles it's assets downloading system by using the requests library. When you open the game for the first time, the game attempts to download all the images by web-scraping them from an online image hosting service I used. All image links can be seen in ***line 330*** in a list named ```imageSources```
+
+The loading can sometimes freeze, to handle this, simply exit & reopen the program and your loading progress will be saved.
+
+Or alternatively, ***skip the asset loading*** by manually downloading the *2048assets* folder in this repo and put it inside *%APPDATA%*
+
 ## The game itself
 This project is just a recreation of the classic 2048 game. But you can change the board size to anything you want as long as the width and height values are inbetween 2 and 10
 (2x2, 4x4, 10x10, 7x8, 6x7, and much more! There are 81 possible size combinations)
@@ -32,9 +39,11 @@ The Startup Lock Mode settings has 2 primary options : Score Goal and Time Limit
 1. Score Goal : Set a specific score goal you need to get to unlock your computer, options range from 128 to 1024 (or in base-2 logarithmic values = 7 to 10)
 2. Time Limit : You can set the time limit from 1 to 5 minutes. If the user **runs out of time** while trying to beat the 2048 puzzle, their computer will be **shutdowned** (Adding a timer is completely optional)
 
-## Libraries used (Built-in and Non built-in)
+## Library & Dependencies
 The program consists of 14 built-in libraries and 2 non built-in libraries (pygame and requests)
 
-If you don't have those 2 required non built-in libraries, simply install PIP (Python's package installer) and run this in your terminal window :
-pip install pygame
-pip install requests
+dependency installation commands can be found in requirements.txt
+
+Run this command to download dependencies:
+```pip install -r requirements.txt```
+(Make sure you already set the cwd to 2048-StartupLock directory inside your local computer)

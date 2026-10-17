@@ -1,0 +1,7 @@
+#Requirements to run 2048-StartupLock by sidharta310312 on GitHub
+
+#For rendering the game
+pygame-ce==2.5.8
+
+#For fetching image from web, this dependency isn't required if you already downloaded all the required assets.
+requests==2.34.2

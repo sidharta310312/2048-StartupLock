@@ -4,6 +4,8 @@ A simple 2048 game with cool GUI transition effects, data-saving system to save 
 
 The source code is entirely written in Python. (Only supportable in Windows)
 
+<img src="DocumentationImages/StartMenuPage.png" width="80%" height="80%" alt="StartMenuPage.png">   
+
 ## Asset installation guide
 The game handles it's assets downloading system by using the requests library. When you open the game for the first time, the game attempts to download all the images by web-scraping them from an online image hosting service I used. All image links can be seen in ***line 330*** in a list named ```imageSources```
 
@@ -15,11 +17,15 @@ Or alternatively, ***skip the asset loading*** by manually downloading the *2048
 This project is just a recreation of the classic 2048 game. But you can change the board size to anything you want as long as the width and height values are inbetween 2 and 10
 (2x2, 4x4, 10x10, 7x8, 6x7, and much more! There are 81 possible size combinations)
 
+<img src="DocumentationImages/GameCreationPage.png" width="60%" height="60%" alt="GameCreationPage.png">   
+
 You can also add custom tile colors, simply head to line 125 and you'll see a variable tuple named _blockColors_. The only tiles with proper color assignments are tile 2-128 (or 1 to 7 in base 2 logarithmic value). You can add more colors for more tiles in RGB value
 
 (For example, if you wan't to set tile 256 to Green, set the 8th item of the list (index = 7) to (0, 255, 0) which is the color Green in RGB. Why specifically the 8th item? Because the base-2 logarithmic value of 256 is 8)
 
 Any other tile without proper color assignments will be colored black, alias (0, 0, 0) in RGB.
+
+<img src="DocumentationImages/GamePage.png" width="60%" height="60%" alt="GamePage.png">  
 
 ## Data-saving system
 The game heavily requires Drive D (D:/) to save your games, but the game can still run even if you don't have Drive D.
@@ -30,6 +36,9 @@ FOR EXAMPLE : You have no Drive D and your only drives are C:/ and F:/, if you w
 ## Startup Lock Mode
 Now this is where things get interesting.
 You can enable Startup Lock Mode by going to the home page of the game, then do the Konami code sequence (Up up down down left right left right A B Enter) to open the settings.
+
+<img src="DocumentationImages/SecretPage.png" width="60%" height="60%" alt="SecretPage.png"> 
+
 
 ### _What even is the Startup Lock Mode?_
 This is a hidden feature in the game where you can **lock your own computer upon startup** when this setting is enabled. To unlock the computer, you will have to get a specific score in 2048. If you fail = computer shutdown, if you succeed = you unlock your computer. You can apply this to your friend's computer as long as your friend uses Windows OS

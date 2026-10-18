@@ -40,7 +40,7 @@ pygame.init()
 
 pygame.display.set_caption("2048")
 
-screensize = (800,800)
+screensize = (800,800) #CHANGE WINDOW SIZE HERE
 screen = pygame.display.set_mode(screensize)
 centerPos = (screensize[0]//2, screensize[1]//2)
 

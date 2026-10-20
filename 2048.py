@@ -34,14 +34,14 @@ print(str(datetime.now()))
 saveFile_drive = "D"
 
 if "--startup" in sys.argv:
-    time.sleep(5) #Delay for Startup Lock mode (give Windows some time to prepare all files and systems)
+    time.sleep(2) #Delay for Startup Lock mode (give Windows some time to prepare all files and systems)
 
 pygame.init()
 
 pygame.display.set_caption("2048")
 
-screensize = (800,800) #CHANGE WINDOW SIZE HERE
-screen = pygame.display.set_mode(screensize)
+screensize = (700,700) #CHANGE WINDOW SIZE HERE
+screen = pygame.display.set_mode(screensize, pygame.RESIZABLE)
 centerPos = (screensize[0]//2, screensize[1]//2)
 
 assets_directory = os.path.join(os.getenv("APPDATA"), "2048assets")
@@ -75,6 +75,12 @@ bgColor = (249, 246, 239)
 
 #init functions
 
+def rescaleUI(n, axis_index):
+    return screensize[axis_index] / 800 * n
+    #Rescales UI units to user's desktop screen size
+    #800x800 px is the default window size
+    
+
 def FormatTime(n):
     minutes, seconds = divmod(n, 60)
     hour, minutes = divmod(minutes, 60)
@@ -98,15 +104,15 @@ def UnpackSublists(thelist):
     return newList
 
 def MakeText(text,size,color,pos,thick):
-    newText = pygame.font.SysFont('Consolas', size, bold=thick).render(text, True, color)
+    newText = pygame.font.SysFont('Consolas', int((rescaleUI(size, 0) + rescaleUI(size, 1)) / 2), bold=thick).render(text, True, color)
     newText_rect = newText.get_rect()
     newText_rect.center = pos
     screen.blit(newText,newText_rect)
     return newText_rect
 
 def RenderBoard(boardData):
-    margin = 80/len(boardData)
-    boardRect = pygame.Rect(0,0,500,500)
+    margin = rescaleUI(80, 0)/len(boardData)
+    boardRect = pygame.Rect(0,0,rescaleUI(500, 0), rescaleUI(500, 1))
     boardRect.center = centerPos[0], centerPos[1] - 50
 
     pygame.draw.rect(screen, darkTaupe, boardRect)
@@ -118,7 +124,6 @@ def RenderBoard(boardData):
         for X_pos, item in enumerate(row):
             newTile = pygame.Rect(boardRect.topleft, tileSize)
             newTile.topleft = newTile.topleft[0] + (margin * X_pos) + (X_pos * tileSize[0]) + (margin/2), newTile.topleft[1] + (margin * Y_pos) + (Y_pos * tileSize[1]) + (margin/2)
-            
             
             if item != 0:
                 #print(item)
@@ -135,7 +140,7 @@ def RenderBoard(boardData):
                 else:
                     pygame.draw.rect(screen, black, newTile)
                 
-                MakeText(str(1 << item), int(200/boardSize[0]), white, newTile.center, False)
+                MakeText(str(1 << item), 30, white, newTile.center, False)
                 
             else:
                 pygame.draw.rect(screen, taupeColor, newTile)
@@ -730,7 +735,10 @@ while gameloop:
                     KeySequenceIndex = 0
                     creditText_xpos = 200
             
-    
+            if event.type == pygame.VIDEORESIZE:
+                screensize = event.size
+                centerPos = (screensize[0]//2, screensize[1]//2)
+                screen = pygame.display.set_mode(screensize, pygame.RESIZABLE)
 
     if page == "start":
         for index, Ypos in enumerate(icons_transitionPos): #RENDERING ICONS
@@ -820,7 +828,7 @@ while gameloop:
                      (size_Text.center[0], size_Text.center[1] + 50),
                      cursor.colliderect(incrementBtn["plus"][index]) or cursor.colliderect(incrementBtn["minus"][index]))
 
-        startBtn.center = centerPos[0], centerPos[1] + 250
+        startBtn.center = centerPos[0], screensize[1] - 150
         pygame.draw.rect(screen, {"True":darkTaupe, "False":taupeColor}[str(startBtn.colliderect(cursor))], startBtn)
         MakeText("LETS PLAY!", 30, white, startBtn.center, startBtn.colliderect(cursor))
 
@@ -868,7 +876,7 @@ while gameloop:
 
         MakeText(f"Score : {("none lmao", 1 << currentScore)[int(currentScore!=0)]}", 20, darkTaupe, (startBtn.center[0] - 250, startBtn.center[1]), startBtn.colliderect(cursor))
         MakeText(f"Moves Made : {("none lmao", movesMade)[int(movesMade>0)]}", 20, darkTaupe, (startBtn.center[0] + 250, startBtn.center[1]), startBtn.colliderect(cursor))
-        MakeText(FormatTime(time.time() - timeStarted + TimerVariable if not gameover else TimerVariable), 30, darkTaupe, (centerPos[0], centerPos[1] - 350), True)
+        MakeText(FormatTime(time.time() - timeStarted + TimerVariable if not gameover else TimerVariable), 30, darkTaupe, (centerPos[0], 50), True)
         MakeText(str(boardSize[0]), 10, darkTaupe, (centerPos[0], boardPosition[1] - 20), False)
         MakeText(str(boardSize[1]), 10, darkTaupe, (boardPosition[0] - 20, centerPos[1] - 50), False)
 
@@ -889,7 +897,7 @@ while gameloop:
 
         if page_flashbangValue > 0:
             if not gameover:
-                p_fbSurface = pygame.Surface((500,500),pygame.SRCALPHA)
+                p_fbSurface = pygame.Surface((rescaleUI(500,0), rescaleUI(500,1)),pygame.SRCALPHA)
                 p_fbSurface.fill((255,255,255,page_flashbangValue))
                 screen.blit(p_fbSurface, (centerPos[0] - 250,centerPos[1] - 300))
             else:
@@ -1044,10 +1052,10 @@ while gameloop:
 
                         
                         imageSurfaces["PLAYBTN"].set_alpha(255 if cursor.colliderect(loadGame_btns["PLAY"]) else 128)
-                        screen.blit(imageSurfaces["PLAYBTN"], [(thingy.center[0] * 1.4, thingy.center[1])[iranoutofvariablenames] - (imageSurfaces["PLAYBTN"].get_size()[iranoutofvariablenames] // 2) for iranoutofvariablenames in range(2)])
+                        screen.blit(imageSurfaces["PLAYBTN"], [(thingy.center[0] * 1.4,thingy.center[1])[iranoutofvariablenames] - (imageSurfaces["PLAYBTN"].get_size()[iranoutofvariablenames] // 2) for iranoutofvariablenames in range(2)])
                         loadGame_btns["PLAY"] = imageSurfaces["PLAYBTN"].get_rect(center=(thingy.center[0] * 1.4, thingy.center[1]))
 
-                        loadGame_btns["DELETE"] = pygame.draw.circle(screen, darkRed if cursor.colliderect(loadGame_btns["DELETE"]) else red, (thingy.center[0] * 1.6, thingy.center[1]), 30)
+                        loadGame_btns["DELETE"] = pygame.draw.circle(screen, darkRed if cursor.colliderect(loadGame_btns["DELETE"]) else red, (thingy.center[0] * 1.6, thingy.center[1]), rescaleUI(30, 0))
                         MakeText("DELETE" if file != warningText_string else "U SURE?", 11, white, (thingy.center[0] * 1.6, thingy.center[1]), cursor.colliderect(loadGame_btns["DELETE"]))
 
                         #Render Button Hitboxes   
@@ -1250,11 +1258,12 @@ buttonDelay = False
 
 def shutdown():
     print("Shutting down pc")
-    os.system("shutdown /s /t 0")
+    #os.system("shutdown /s /t 0")
 
 while gameloop: #Startup Lock mode
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            shutdown()
             pygame.quit()
             sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN:
